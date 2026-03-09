@@ -1,0 +1,62 @@
+apiVersion: margo.org/v1-alpha1
+kind: ApplicationDescription
+metadata:
+  id: logiccloud-control
+  name: logiccloud Control
+  description: Edge device management and industrial automation control plane
+  version: 4.14.11
+  catalog:
+    application:
+      icon: ./resources/logiccloud-control-logo.png
+      tagline: Industrial edge control plane for device management, monitoring, and workload orchestration.
+      descriptionFile: ./resources/description.md
+      releaseNotes: ./resources/release-notes.md
+      licenseFile: ./resources/license.txt
+      site: https://logiccloud.io
+      tags: ["edge", "industrial", "control-plane", "automation", "iot", "device-management"]
+    author:
+      - name: logiccloud Team
+        email: support@logiccloud.io
+    organization:
+      - name: logiccloud
+        site: https://logiccloud.io
+deploymentProfiles:
+  - type: compose
+    id: logiccloud-control-compose
+    components:
+      - name: logiccloud-control
+        properties:
+          packageLocation: docker.io/logiccloud/logiccloud-control:4.14.11
+parameters:
+  httpPort:
+    value: 8080
+    targets:
+      - pointer: PORTS.8080
+        components: ["logiccloud-control"]
+  timezone:
+    value: UTC
+    targets:
+      - pointer: ENV.TZ
+        components: ["logiccloud-control"]
+configuration:
+  sections:
+    - name: Network Configuration
+      settings:
+        - parameter: httpPort
+          name: HTTP Port
+          description: Port for the logiccloud Control web interface and API
+          schema: portRange
+        - parameter: timezone
+          name: Timezone
+          description: Timezone for the container (e.g., UTC, Europe/Berlin)
+          schema: timezoneText
+  schema:
+    - name: portRange
+      dataType: integer
+      minValue: 1024
+      maxValue: 65535
+      allowEmpty: false
+    - name: timezoneText
+      dataType: string
+      maxLength: 64
+      allowEmpty: false
