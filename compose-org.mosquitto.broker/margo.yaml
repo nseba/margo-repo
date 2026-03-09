@@ -1,0 +1,67 @@
+apiVersion: margo.org/v1-alpha1
+kind: ApplicationDescription
+metadata:
+  id: mosquitto-broker
+  name: Mosquitto MQTT Broker
+  description: Eclipse Mosquitto MQTT broker with OpenSSL support
+  version: 2.1.1
+  catalog:
+    application:
+      icon: ./resources/mosquitto-logo.png
+      tagline: Lightweight open-source MQTT broker for IoT messaging and communication.
+      descriptionFile: ./resources/description.md
+      releaseNotes: ./resources/release-notes.md
+      licenseFile: ./resources/license.txt
+      site: https://mosquitto.org
+      tags: ["mqtt", "messaging", "iot", "broker", "messaging-queue"]
+    author:
+      - name: Eclipse Mosquitto Project
+        email: mosquitto-dev@eclipse.org
+    organization:
+      - name: Eclipse Foundation
+        site: https://www.eclipse.org
+deploymentProfiles:
+  - type: compose
+    id: mosquitto-broker-compose
+    components:
+      - name: mosquitto-broker
+        properties:
+          packageLocation: https://console-dev.flecs.tech/api/v2/manifests/org.mosquitto.broker/2.1.1-alpine
+parameters:
+  mqttPort:
+    value: 1883
+    targets:
+      - pointer: PORTS.1883
+        components: ["mosquitto-broker"]
+  mqttSecurePort:
+    value: 8883
+    targets:
+      - pointer: PORTS.8883
+        components: ["mosquitto-broker"]
+  websocketPort:
+    value: 9001
+    targets:
+      - pointer: PORTS.9001
+        components: ["mosquitto-broker"]
+configuration:
+  sections:
+    - name: Network Configuration
+      settings:
+        - parameter: mqttPort
+          name: MQTT Port
+          description: Standard MQTT port for unencrypted connections
+          schema: portRange
+        - parameter: mqttSecurePort
+          name: MQTT Secure Port
+          description: MQTT port for TLS/SSL encrypted connections
+          schema: portRange
+        - parameter: websocketPort
+          name: WebSocket Port
+          description: Port for MQTT over WebSocket connections
+          schema: portRange
+  schema:
+    - name: portRange
+      dataType: integer
+      minValue: 1024
+      maxValue: 65535
+      allowEmpty: false

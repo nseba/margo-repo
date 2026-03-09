@@ -1,0 +1,137 @@
+apiVersion: margo.org/v1-alpha1
+kind: ApplicationDescription
+metadata:
+  id: node-red
+  name: Node-RED
+  description: Flow-based programming tool for event-driven applications
+  version: 4.1.4
+  catalog:
+    application:
+      icon: ./resources/node-red-logo.png
+      tagline: Low-code programming tool for wiring together IoT devices, APIs, and services.
+      descriptionFile: ./resources/description.md
+      releaseNotes: ./resources/release-notes.md
+      licenseFile: ./resources/license.txt
+      site: https://nodered.org
+      tags: ["automation", "iot", "low-code", "flow-based", "integration"]
+    author:
+      - name: Node-RED Team
+        email: team@nodered.org
+    organization:
+      - name: OpenJS Foundation
+        site: https://openjsf.org
+deploymentProfiles:
+  - type: compose
+    id: node-red-compose
+    components:
+      - name: node-red
+        properties:
+          packageLocation: https://console-dev.flecs.tech/api/v2/manifests/org.openjsf.node-red/4.1.4
+parameters:
+  nodeRedPort:
+    value: 1880
+    targets:
+      - pointer: PORTS.1880
+        components: ["node-red"]
+  timezone:
+    value: UTC
+    targets:
+      - pointer: ENV.TZ
+        components: ["node-red"]
+  nodeRedCredentialSecret:
+    value: my-secret-key
+    targets:
+      - pointer: ENV.NODE_RED_CREDENTIAL_SECRET
+        components: ["node-red"]
+  enableProjects:
+    value: false
+    targets:
+      - pointer: ENV.NODE_RED_ENABLE_PROJECTS
+        components: ["node-red"]
+  flowFile:
+    value: flows.json
+    targets:
+      - pointer: ENV.FLOWS
+        components: ["node-red"]
+  nodeOptions:
+    value: --max-old-space-size=256
+    targets:
+      - pointer: ENV.NODE_OPTIONS
+        components: ["node-red"]
+  enableSafeMode:
+    value: false
+    targets:
+      - pointer: ENV.NODE_RED_ENABLE_SAFE_MODE
+        components: ["node-red"]
+configuration:
+  sections:
+    - name: Network Configuration
+      settings:
+        - parameter: nodeRedPort
+          name: Node-RED Port
+          description: Port to access Node-RED editor and runtime
+          schema: portRange
+        - parameter: timezone
+          name: Timezone
+          description: Timezone for Node-RED container (e.g., UTC, America/New_York)
+          schema: timezoneText
+    - name: Application Configuration
+      settings:
+        - parameter: nodeRedCredentialSecret
+          name: Credential Secret
+          description: Secret key for encrypting credentials in flows
+          schema: secretKey
+        - parameter: enableProjects
+          name: Enable Projects
+          description: Enable Node-RED projects feature for version control
+          schema: booleanValue
+        - parameter: flowFile
+          name: Flow File
+          description: Name of the flow file to use
+          schema: fileName
+        - parameter: enableSafeMode
+          name: Enable Safe Mode
+          description: Start Node-RED in safe mode (flows not started)
+          schema: booleanValue
+    - name: Runtime Configuration
+      settings:
+        - parameter: nodeOptions
+          name: Node.js Options
+          description: Node.js runtime options (e.g., memory limits)
+          schema: nodeOptionsText
+  schema:
+    - name: portRange
+      dataType: integer
+      minValue: 1024
+      maxValue: 65535
+      allowEmpty: false
+    - name: booleanValue
+      dataType: boolean
+      allowEmpty: false
+    - name: timezoneText
+      dataType: string
+      maxLength: 64
+      allowEmpty: false
+    - name: secretKey
+      dataType: string
+      minLength: 8
+      maxLength: 256
+      allowEmpty: false
+      sensitive: true
+    - name: fileName
+      dataType: string
+      maxLength: 255
+      allowEmpty: false
+    - name: nodeOptionsText
+      dataType: string
+      maxLength: 256
+      allowEmpty: true
+    - name: cpuRange
+      dataType: double
+      minValue: 0.1
+      maxPrecision: 1
+      allowEmpty: false
+    - name: memoryRange
+      dataType: integer
+      minValue: 128
+      allowEmpty: false
