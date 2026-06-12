@@ -4,7 +4,7 @@ metadata:
   id: logiccloud-control
   name: logiccloud Control
   description: Edge device management and industrial automation control plane
-  version: 4.14.11
+  version: 6.50.4-beta
   catalog:
     application:
       icon: ./resources/logiccloud-control-logo.png
