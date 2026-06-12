@@ -26,7 +26,7 @@ deploymentProfiles:
     components:
       - name: logiccloud-control
         properties:
-          packageLocation: https://hub.docker.com/r/logiccloud/logiccloud-control:6.50.4-beta
+          packageLocation: https://registry-1.docker.io/v2/logiccloud/logiccloud-control/manifests/6.50.4-beta
 parameters:
   httpPort:
     value: 8080
